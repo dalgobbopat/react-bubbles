@@ -1,42 +1,49 @@
-import React, {useState} from "react";
+import React,{ useState} from 'react';
 import axios from 'axios';
-
-
-const Login = props => {
-  const [credentials, setCredentials] = useState({
-      username: "",
-      password: ""
-  });
-
-  const onChangeHandler = e => {
-      return setCredentials({
-          ...credentials,
-          [e.target.name]: e.target.value
-      });
-  };
-
-  const handleSubmit = e => {
-      e.preventDefault();
-      axios
-          .post("http://localhost:5000/api/login", credentials)
-          .then(res => {
-              localStorage.setItem("token", res.data.payload);
-              props.history.push("bubbles");
-          })
-          .catch(err => console.log(err));
-  };
+const Login = (props) => {
+  // make a post request to retrieve a token from the api
+  // when you have handled the token, navigate to the BubblePage route
+  const [login,setLogin]=useState({
+    username:'',
+    password:''
+});
+const handleChange=e=>{
+  setLogin({
+      ...login,
+      [e.target.name]:e.target.value
+  })
+  // console.log(login.username)
+  // console.log(login.password)  
+}
+const LoginSubmit=e=>{
+  e.preventDefault();
+  // console.log(localStorage.token)
+  console.log({login})
+  axios.post('http://localhost:5000/api/login', login)
+  .then(response=>{
+      console.log(response);
+      localStorage.setItem('token',response.data.payload);
+      props.history.push("/BubblePage");
+  })
+  .catch(err=>{
+      console.log(err);
+      props.history.push("/");
+  })
+}
   return (
+    
       <div>
-          <form onSubmit={handleSubmit}>
-              <input type="text" name="username" onChange={onChangeHandler} />
-              <input
-                  type="password"
-                  name="password"
-                  onChange={onChangeHandler}
-              />
-              <button>Log in</button>
-          </form>
-      </div>
+      <h1>Welcome to the Bubble App!</h1>
+   
+            <h1>Login</h1>
+            <form onSubmit={LoginSubmit}>
+                <label htmlFor="username">Username: </label>
+                <input name="username" type="text" onChange={handleChange} id="username"/>
+                <label htmlFor="password">Password: </label>
+                <input name="password" type="password" onChange={handleChange} id="password"/>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
   );
 };
 
